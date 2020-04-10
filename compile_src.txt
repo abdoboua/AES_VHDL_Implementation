@@ -1,0 +1,55 @@
+#!/bin/bash
+
+export PROJECTNAME="."
+
+# TO DO : test $PROJECTNAME
+echo "the project location is : $PROJECTNAME"
+echo "removing libs : folder plus line declaration in Modelsim.ini file"
+vdel -lib $PROJECTNAME/LIB/LIB_AES -all
+vdel -lib $PROJECTNAME/LIB/LIB_RTL -all
+vdel -lib $PROJECTNAME/LIB/LIB_BENCH -all
+
+echo "creating VHDL LIBRARY"
+vlib $PROJECTNAME/LIB/LIB_AES
+vmap LIB_AES $PROJECTNAME/LIB/LIB_AES
+vlib $PROJECTNAME/LIB/LIB_RTL
+vmap LIB_RTL $PROJECTNAME/LIB/LIB_RTL
+vlib $PROJECTNAME/LIB/LIB_BENCH
+vmap LIB_BENCH $PROJECTNAME/LIB/LIB_BENCH
+
+echo "compile third party library  : type definition package"
+vcom -work LIB_AES $PROJECTNAME/SRC/THIRDPARTY/CryptPack.vhd
+
+echo "compile vhdl sources"
+vcom -work LIB_RTL $PROJECTNAME/SRC/RTL/SBOX_I_O.vhd
+vcom -work LIB_RTL $PROJECTNAME/SRC/RTL/SubBytes.vhd
+vcom -work LIB_RTL $PROJECTNAME/SRC/RTL/ShiftRows.vhd
+vcom -work LIB_RTL $PROJECTNAME/SRC/RTL/AddRoundKey.vhd
+vcom -work LIB_RTL $PROJECTNAME/SRC/RTL/MultiplyMatrix.vhd
+vcom -work LIB_RTL $PROJECTNAME/SRC/RTL/MixColumns.vhd
+vcom -work LIB_RTL $PROJECTNAME/SRC/RTL/FSM_AES.vhd
+vcom -work LIB_RTL $PROJECTNAME/SRC/RTL/AESRound.vhd
+vcom -work LIB_AES $PROJECTNAME/SRC/THIRDPARTY/KeyExpansion_I_O_table.vhd
+vcom -work LIB_RTL $PROJECTNAME/SRC/RTL/AES_Top.vhd
+echo "compile vhdl test bench"
+#vcom -work LIB_BENCH $PROJECTNAME/SRC/BENCH/SBox_I_o_tb.vhd
+#vcom -work LIB_BENCH $PROJECTNAME/SRC/BENCH/SubBytes_tb.vhd
+#vcom -work LIB_BENCH $PROJECTNAME/SRC/BENCH/Shift_Rows_tb.vhd
+#vcom -work LIB_BENCH $PROJECTNAME/SRC/BENCH/AddRoundKey_tb.vhd
+#vcom -work LIB_BENCH $PROJECTNAME/SRC/BENCH/MultiplyMatrix_tb.vhd
+#vcom -work LIB_BENCH $PROJECTNAME/SRC/BENCH/Mux_Columns_tb.vhd
+#vcom -work LIB_BENCH $PROJECTNAME/SRC/BENCH/FSM_AES_tb.vhd
+#vcom -work LIB_BENCH $PROJECTNAME/SRC/BENCH/AESRound_tb.vhd
+vcom -work LIB_BENCH $PROJECTNAME/SRC/BENCH/AES_Top_tb.vhd
+echo "compilation finished"
+echo "start simulation..."
+
+#vsim LIB_BENCH.sbox_tb &
+#vsim LIB_BENCH.subbytes_tb &
+#vsim LIB_BENCH.shift_rows_tb &
+#vsim LIB_BENCH.addroundkey_tb &
+#vsim LIB_BENCH.multiplymatrix_tb &
+#vsim LIB_BENCH.muxcolumns_tb &
+#vsim LIB_BENCH.fsm_aes_tb &
+vsim LIB_BENCH.aes_top_tb &
+
